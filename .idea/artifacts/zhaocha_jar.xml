@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact name="zhaocha:jar">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="root">
+      <element id="archive" name="zhaocha.jar">
+        <element id="module-output" name="zhaocha" />
+      </element>
+    </root>
+  </artifact>
+</component>
