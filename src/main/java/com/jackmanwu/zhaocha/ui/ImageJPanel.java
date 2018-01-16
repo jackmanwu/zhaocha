@@ -39,11 +39,9 @@ public class ImageJPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     Point point = e.getPoint();
-//                    System.out.println("点击坐标：" + point);
                     jFrame.setVisible(false);
                     try {
                         Robot robot = new Robot();
-                        System.out.println((point.x + dx) + "," + (point.y + dy));
                         robot.mouseMove(point.x + dx, point.y + dy);
                         robot.delay(10);
                         robot.mousePress(InputEvent.BUTTON1_MASK);

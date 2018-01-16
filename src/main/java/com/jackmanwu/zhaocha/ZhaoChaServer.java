@@ -3,12 +3,13 @@ package com.jackmanwu.zhaocha;
 import com.jackmanwu.zhaocha.ui.ImageJPanel;
 import com.jackmanwu.zhaocha.ui.TempImageJPanel;
 import com.jackmanwu.zhaocha.util.ColorUtil;
+import com.melloware.jintellitype.HotkeyListener;
+import com.melloware.jintellitype.JIntellitype;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -42,6 +43,88 @@ public class ZhaoChaServer {
         jFrame.setBounds(1150, 384, 100, 100);
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jFrame.setLayout(new BorderLayout());
+
+//        jFrame.addWindowListener(new WindowListener() {
+//            @Override
+//            public void windowOpened(WindowEvent e) {
+//
+//            }
+//
+//            @Override
+//            public void windowClosing(WindowEvent e) {
+//
+//            }
+//
+//            @Override
+//            public void windowClosed(WindowEvent e) {
+//
+//            }
+//
+//            @Override
+//            public void windowIconified(WindowEvent e) {
+//                if (!SystemTray.isSupported()) {
+//                    System.out.println("系统不支持托盘");
+//                    return;
+//                }
+//                SystemTray systemTray = SystemTray.getSystemTray();
+//                PopupMenu popupMenu = new PopupMenu();
+//                Image image = Toolkit.getDefaultToolkit().getImage(path + "left.png");
+//                TrayIcon trayIcon = new TrayIcon(image, "找茬辅助", popupMenu);
+//                trayIcon.setImageAutoSize(true);
+//                try {
+//                    systemTray.add(trayIcon);
+//                } catch (AWTException e1) {
+//                    e1.printStackTrace();
+//                    System.out.println("图片添加失败");
+//                }
+//                MenuItem menuItem = new Menu("还原");
+//                MenuItem exitItem = new Menu("退出");
+//                popupMenu.add(menuItem);
+//                popupMenu.add(exitItem);
+//            }
+//
+//            @Override
+//            public void windowDeiconified(WindowEvent e) {
+//
+//            }
+//
+//            @Override
+//            public void windowActivated(WindowEvent e) {
+//
+//            }
+//
+//            @Override
+//            public void windowDeactivated(WindowEvent e) {
+//
+//            }
+//        });
+
+        //热键刷新图片
+        JIntellitype.getInstance().registerHotKey(0, JIntellitype.MOD_ALT, 'Q');
+        JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL + JIntellitype.MOD_SHIFT, 'F');
+        JIntellitype.getInstance().registerHotKey(2, JIntellitype.MOD_CONTROL + JIntellitype.MOD_SHIFT, 'D');
+        JIntellitype.getInstance().registerHotKey(3, JIntellitype.MOD_CONTROL + JIntellitype.MOD_SHIFT, 'C');
+        JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
+            @Override
+            public void onHotKey(int i) {
+                switch (i) {
+                    case 1:
+                        flushImage();
+                        break;
+                    case 2:
+                        showImage();
+                        break;
+                    case 3:
+
+                        break;
+                    default:
+                        JIntellitype.getInstance().cleanUp();
+                        System.exit(0);
+                        break;
+                }
+            }
+        });
+
         JPanel jPanel = new JPanel();
         jPanel.setBackground(Color.GRAY);
 
@@ -64,21 +147,7 @@ public class ZhaoChaServer {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    BufferedImage tempImage = null;
-                    try {
-                        tempImage = getImage(false);
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                        System.out.println("获取图片失败");
-                        return;
-                    }
-                    JFrame tempImageJFrame = new JFrame("大图");
-                    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-                    tempImageJFrame.setBounds((dimension.width - 762) / 2, (dimension.height - 572) / 2, 762, 572);
-                    tempImageJFrame.setLayout(new BorderLayout());
-                    JPanel jPanel = new TempImageJPanel(762, 572, tempImage);
-                    tempImageJFrame.add(jPanel, BorderLayout.CENTER);
-                    tempImageJFrame.setVisible(true);
+                    showImage();
                 }
             }
 
@@ -102,6 +171,24 @@ public class ZhaoChaServer {
 
             }
         };
+    }
+
+    private static void showImage() {
+        BufferedImage tempImage;
+        try {
+            tempImage = getImage(path + "temp.png");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("获取图片失败");
+            return;
+        }
+        JFrame tempImageJFrame = new JFrame("大图");
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        tempImageJFrame.setBounds((dimension.width - 762) / 2, (dimension.height - 572) / 2, 762, 572);
+        tempImageJFrame.setLayout(new BorderLayout());
+        JPanel jPanel = new TempImageJPanel(762, 572, tempImage);
+        tempImageJFrame.add(jPanel, BorderLayout.CENTER);
+        tempImageJFrame.setVisible(true);
     }
 
     private static MouseListener mouseClick() {
@@ -109,29 +196,7 @@ public class ZhaoChaServer {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    System.out.println("开始");
-                    if (imageJFrame != null) {
-                        imageJFrame.setVisible(false);
-                    }
-                    try {
-                        image = getImage(true);
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                        System.out.println("临时图片获取失败...");
-                    }
-                    if (image == null) {
-                        System.out.println("临时图片为空...");
-                        return;
-                    }
-                    if (imageJFrame == null) {
-                        imageJFrame = new JFrame();
-                        imageJFrame.setBounds(x, y, width, height);
-                        imageJFrame.setLayout(new BorderLayout());
-                        imageJFrame.setUndecorated(true);
-                        JPanel imageJPanel = new ImageJPanel(x, y, width, height, imageJFrame);
-                        imageJFrame.add(imageJPanel, BorderLayout.CENTER);
-                    }
-                    imageJFrame.setVisible(true);
+                    flushImage();
                 }
             }
 
@@ -157,29 +222,49 @@ public class ZhaoChaServer {
         };
     }
 
-    private static BufferedImage getImage(boolean generateImage) throws Exception {
-        if (generateImage) {
-            try {
-                zhaocha();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-                System.out.println("找茬失败...");
-            }
+    private static void flushImage() {
+        if (imageJFrame != null) {
+            imageJFrame.setVisible(false);
         }
-        return ImageIO.read(new FileInputStream(new File(path + "temp.png")));
+        try {
+            zhaocha();
+            image = getImage(path + "temp.png");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("临时图片获取失败...");
+        }
+        if (image == null) {
+            System.out.println("临时图片为空...");
+            return;
+        }
+        if (imageJFrame == null) {
+            imageJFrame = new JFrame();
+            imageJFrame.setBounds(x, y, width, height);
+            imageJFrame.setLayout(new BorderLayout());
+            imageJFrame.setUndecorated(true);
+            JPanel imageJPanel = new ImageJPanel(x, y, width, height, imageJFrame);
+            imageJFrame.add(imageJPanel, BorderLayout.CENTER);
+        }
+        imageJFrame.setState(JFrame.NORMAL);
+        imageJFrame.setVisible(true);
+    }
+
+    private static BufferedImage getImage(String path) throws Exception {
+        return ImageIO.read(new FileInputStream(new File(path)));
     }
 
     private static void zhaocha() throws Exception {
         Robot robot = new Robot();
+        Point mousePoint = MouseInfo.getPointerInfo().getLocation();
+        robot.mouseMove(0, 0);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         BufferedImage image = robot.createScreenCapture(new Rectangle(0, 0, dimension.width, dimension.height));
+        robot.mouseMove(mousePoint.x, mousePoint.y);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageIO.write(image, "png", outputStream);
         byte[] bytes = outputStream.toByteArray();
         FileOutputStream fileOutputStream = new FileOutputStream(path + "screen.png");
         fileOutputStream.write(bytes);
-//        BufferedImage image = ImageIO.read(new FileInputStream(new File(path + "screen.png")));
-        System.out.println("宽：" + image.getWidth() + "," + image.getHeight());
 
         int baseX = 0;
         int baseY = 0;
@@ -229,40 +314,10 @@ public class ZhaoChaServer {
             }
         }
 
-//        System.out.println("基准横坐标：" + baseX);
-//        System.out.println("基准纵坐标：" + baseY);
-
-//        System.out.println("第一幅图：");
         int leftX = baseX + 93;
         int leftY = baseY + 312;
-//        System.out.println("左上角：" + leftX + "-" + leftY);
         x = leftX;
         y = leftY;
-
-        System.out.println(baseX);
-        int rightX = baseX + 474;
-//        System.out.println("右上角：" + rightX + "-" + leftY);
-
-        int bottomY = baseY + 598;
-//        System.out.println("左下角：" + leftX + "-" + bottomY);
-
-//        System.out.println("右下角：" + rightX + "-" + bottomY);
-
-
-//        System.out.println("第二幅图：");
-        int leftX1 = leftX + 457;
-//        System.out.println("左上角：" + leftX1 + "-" + leftY);
-
-        int diffX = rightX - leftX;
-        int diffY = bottomY - leftY;
-
-        int rightX1 = leftX1 + diffX;
-//        System.out.println("右上角：" + rightX1 + "-" + leftY);
-
-        int leftY1 = leftY + diffY;
-//        System.out.println("左下角：" + leftX1 + "-" + leftY1);
-
-//        System.out.println("右下角：" + rightX1 + "-" + leftY1);
 
         BufferedImage leftImageByte = image.getSubimage(leftX, leftY, width, height);
         ImageIO.write(leftImageByte, "png", new File(path + "left.png"));
