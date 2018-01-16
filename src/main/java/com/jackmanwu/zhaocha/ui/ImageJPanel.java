@@ -1,11 +1,12 @@
 package com.jackmanwu.zhaocha.ui;
 
+import com.jackmanwu.zhaocha.ZhaoChaServer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 
 /**
  * Created by JackManWu on 2018/1/15.
@@ -15,16 +16,13 @@ public class ImageJPanel extends JPanel {
     private int dy;
     private int width;
     private int height;
-    private BufferedImage image;
     private JFrame jFrame;
 
-    public ImageJPanel(int dx, int dy, int width, int height, BufferedImage image, JFrame jFrame) {
+    public ImageJPanel(int dx, int dy, int width, int height, JFrame jFrame) {
         this.dx = dx;
         this.dy = dy;
-        System.out.println("差值：" + dx + "," + dy);
         this.width = width;
         this.height = height;
-        this.image = image;
         this.jFrame = jFrame;
         this.addMouseListener(mouseListener());
     }
@@ -32,7 +30,7 @@ public class ImageJPanel extends JPanel {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        g.drawImage(image, 0, 0, width, height, null);
+        g.drawImage(ZhaoChaServer.image, 0, 0, width, height, null);
     }
 
     private MouseListener mouseListener() {
@@ -41,7 +39,7 @@ public class ImageJPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     Point point = e.getPoint();
-                    System.out.println("点击坐标：" + point);
+//                    System.out.println("点击坐标：" + point);
                     jFrame.setVisible(false);
                     try {
                         Robot robot = new Robot();
