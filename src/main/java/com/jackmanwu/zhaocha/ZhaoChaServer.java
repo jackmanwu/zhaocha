@@ -44,61 +44,6 @@ public class ZhaoChaServer {
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jFrame.setLayout(new BorderLayout());
 
-//        jFrame.addWindowListener(new WindowListener() {
-//            @Override
-//            public void windowOpened(WindowEvent e) {
-//
-//            }
-//
-//            @Override
-//            public void windowClosing(WindowEvent e) {
-//
-//            }
-//
-//            @Override
-//            public void windowClosed(WindowEvent e) {
-//
-//            }
-//
-//            @Override
-//            public void windowIconified(WindowEvent e) {
-//                if (!SystemTray.isSupported()) {
-//                    System.out.println("系统不支持托盘");
-//                    return;
-//                }
-//                SystemTray systemTray = SystemTray.getSystemTray();
-//                PopupMenu popupMenu = new PopupMenu();
-//                Image image = Toolkit.getDefaultToolkit().getImage(path + "left.png");
-//                TrayIcon trayIcon = new TrayIcon(image, "找茬辅助", popupMenu);
-//                trayIcon.setImageAutoSize(true);
-//                try {
-//                    systemTray.add(trayIcon);
-//                } catch (AWTException e1) {
-//                    e1.printStackTrace();
-//                    System.out.println("图片添加失败");
-//                }
-//                MenuItem menuItem = new Menu("还原");
-//                MenuItem exitItem = new Menu("退出");
-//                popupMenu.add(menuItem);
-//                popupMenu.add(exitItem);
-//            }
-//
-//            @Override
-//            public void windowDeiconified(WindowEvent e) {
-//
-//            }
-//
-//            @Override
-//            public void windowActivated(WindowEvent e) {
-//
-//            }
-//
-//            @Override
-//            public void windowDeactivated(WindowEvent e) {
-//
-//            }
-//        });
-
         //热键刷新图片
         JIntellitype.getInstance().registerHotKey(0, JIntellitype.MOD_ALT, 'Q');
         JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL + JIntellitype.MOD_SHIFT, 'F');
